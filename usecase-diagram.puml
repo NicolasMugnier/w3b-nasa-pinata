@@ -1,0 +1,9 @@
+@startuml
+actor System
+usecase BusinessRules_Gateways_SpaceGateway
+usecase BusinessRules_Gateways_FileStorageGateway
+usecase BusinessRules_UseCases_CreateEarthGifImage
+BusinessRules_UseCases_CreateEarthGifImage <.. BusinessRules_Gateways_FileStorageGateway
+BusinessRules_UseCases_CreateEarthGifImage <.. BusinessRules_Gateways_SpaceGateway
+System --> BusinessRules_UseCases_CreateEarthGifImage
+@enduml

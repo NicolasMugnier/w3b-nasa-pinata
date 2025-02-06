@@ -1,0 +1,8 @@
+{
+    "name": "anyvoid/w3b-nasa-pinata",
+    "autoload": {
+        "psr-4": {
+            "Anyvoid\\W3bNasaPinata\\": "src/"
+        }
+    }
+}
