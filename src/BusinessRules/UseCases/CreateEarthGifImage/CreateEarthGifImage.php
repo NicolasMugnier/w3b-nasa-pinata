@@ -26,31 +26,26 @@ final class CreateEarthGifImage
         $directory = $this->imageDirectory.'/epic/'.$year.'/'.$month.'/'.$day.'/';
         $imgGifName = 'earth.gif';
 
-        if (!\file_exists($directory.$imgGifName)) {
-            $images = $this->spaceGateway->getEarthImages($request->date);
-            if (\count($images) === 0) {
-                throw new \Exception('No image available');
-            }
-
-            if (!\is_dir($directory)) {
-                \mkdir($directory, 0777, true);
-            }
-
-            foreach ($images as $name => $binary) {
-                \file_put_contents($directory.$name.'.png', $binary);
-            }
-        
-            $cmd = "cd $directory && convert -delay 15 -loop 0 -layers Optimize -resize 1024x1024 epic_*.png $imgGifName";
-            \exec($cmd);
+        $result = $this->spaceGateway->getEarthImages($request->date);
+        $images = $result['images'];
+        if (\count($images) === 0) {
+            throw new \Exception('No image available');
         }
 
+        if (!\is_dir($directory)) {
+            \mkdir($directory, 0777, true);
+        }
+
+        foreach ($images as $name => $data) {
+            \file_put_contents($directory.$name.'.png', $data['content']);
+        }
+        
+        $cmd = "cd $directory && convert -delay 15 -loop 0 -layers Optimize -resize 1024x1024 epic_*.png $imgGifName";
+        \exec($cmd);
+
         $name = $year.'-'.$month.'-'.$day.'-'.$imgGifName;
-        $metadata = [
-            'description' => 'Imagery collected by DSCOVR\'s Earth Polychromatic Imaging Camera (EPIC) instrument',
-            'images_collected_at' => "$year-$month-$day",
-            'source' => 'Nasa Epic API'
-        ];
-        $id = $this->fileStorageGateway->save($directory.$imgGifName, $name, $metadata);
+        $jsonData = \array_merge($result['metadata'], ['images' => \array_values(\array_map(static function (array $item) { unset($item['content']); return $item; }, $images))]);
+        $id = $this->fileStorageGateway->save($directory.$imgGifName, $name, $result['metadata'], $jsonData);
 
         return new CreateEarthGifImageResponse($id);
     }

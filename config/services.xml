@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<container xmlns="http://symfony.com/schema/dic/services"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
+
+    <services>
+        <service id="Anyvoid\W3bNasaPinata\App\Gateways\NasaSpaceGateway" autowire="true"/>
+        <service id="Anyvoid\W3bNasaPinata\App\Gateways\PinataFileStorageGateway" autowire="true"/>
+        <service id="Anyvoid\W3bNasaPinata\BusinessRules\UseCases\CreateEarthGifImage\CreateEarthGifImage" autowire="true"/>
+        <service id="Anyvoid\W3bNasaPinata\App\Commands\GenerateEarthCommand" autowire="true" public="true"/>
+
+        <defaults autowire="true" autoconfigure="true">
+            <bind key="Anyvoid\W3bNasaPinata\BusinessRules\Gateways\SpaceGateway $spaceGateway" type="service" id="Anyvoid\W3bNasaPinata\App\Gateways\NasaSpaceGateway" />
+            <bind key="Anyvoid\W3bNasaPinata\BusinessRules\Gateways\FileStorageGateway $fileStorageGateway" type="service" id="Anyvoid\W3bNasaPinata\App\Gateways\PinataFileStorageGateway" />
+            <bind key="string $nasaEpicApiUrl">https://api.nasa.gov/EPIC/api/</bind>
+            <bind key="string $nasaEpicArchiveUrl">https://epic.gsfc.nasa.gov/archive/</bind>
+            <bind key="string $pinataApiUrl">https://api.pinata.cloud/</bind>
+            <bind key="string $nasaApiKey">%env(resolve:NASA_API_KEY)%</bind>
+            <bind key="string $pinataJwt">%env(resolve:PINATA_JWT)%</bind>
+            <bind key="string $imageDirectory">%image_directory%</bind>
+        </defaults>
+    </services>
+</container>

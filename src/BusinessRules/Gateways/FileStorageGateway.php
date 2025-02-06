@@ -6,5 +6,5 @@ namespace Anyvoid\W3bNasaPinata\BusinessRules\Gateways;
 
 interface FileStorageGateway
 {
-    public function save(string $data, string $filename, array $metadata): string;
+    public function save(string $data, string $filename, array $metadata, array $jsonData): string;
 }

@@ -5,19 +5,24 @@ declare(strict_types=1);
 namespace Anyvoid\W3bNasaPinata\App\Gateways;
 
 use Anyvoid\W3bNasaPinata\BusinessRules\Gateways\FileStorageGateway;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\HttpClientInterface;
 
 final class PinataFileStorageGateway implements FileStorageGateway
 {
+    private HttpClientInterface $httpClient;
+
     public function __construct(
-        private readonly HttpClientInterface $httpClient,        
         private readonly string $pinataApiUrl,
         private readonly string $pinataJwt
-    ) {}
+    ) {
+        $this->httpClient = HttpClient::create();
+    }
 
-    public function save(string $filename, string $name, array $metadata): string
+    public function save(string $filename, string $name, array $metadata, array $jsonData): string
     {
         $assetIpfsHash = $this->saveAsset($filename, $name, $metadata);
-        $metadataIpfsHash = $this->saveAssetMetadata($assetIpfsHash, $name, $metadata);
+        $metadataIpfsHash = $this->saveAssetMetadata($assetIpfsHash, $name, $jsonData);
 
         return $metadataIpfsHash;
     }
